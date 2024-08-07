@@ -1,0 +1,148 @@
+#include<stdio.h>
+#include<string.h>
+#include<stdlib.h>
+
+struct student
+{
+    char name[20];
+    char Address[50];
+    int marks[5]; //position 1 for maths, 2 for physics, 3 for Chemistry, 4 for Computer, 5 for English
+};
+
+void printrec(struct student s[], int n){
+    printf("\nName = %s",s[n].name);
+    printf("\nAddress = %s",s[n].Address);
+    printf("\nMarks in Maths = %d",s[n].marks[0]);
+    printf("\nMarks in Physics = %d",s[n].marks[1]);
+    printf("\nMarks in Chemistry = %d",s[n].marks[2]);
+    printf("\nMarks in Computer = %d",s[n].marks[3]);
+    printf("\nMarks in English = %d",s[n].marks[4]);
+}
+void print_if_passed(struct student s){
+    int i,cnt=0;
+    for(i=0;i<5;i++){
+        if(s.marks[i]>=40){
+            cnt++;
+        }
+    }
+    if(cnt>=3){
+        printf(s.name);
+    }
+}
+void print_if_failed(struct student s){
+    int i,cnt=0;
+    for(i=0;i<5;i++){
+        if(s.marks[i]>=40){
+            cnt++;
+        }
+    }
+    if(cnt<3){
+        printf(s.name);
+    }
+}
+void print_record_max(struct student s[],int n, int sub_number){
+    int maxi=0,i;
+    for(i=0;i<n;i++){
+        if(s[maxi].marks[sub_number] < s[i].marks[sub_number]){
+            maxi=i;
+        }
+    }
+    printrec(s,maxi);
+}
+void print_record_min(struct student s[],int n, int sub_number){
+    int mini=0,i;
+    for(i=0;i<n;i++){
+        if(s[mini].marks[sub_number] > s[i].marks[sub_number]){
+            mini=i;
+        }
+    }
+    printrec(s,mini);
+}
+
+int maxavgindex(struct student s[],int n){
+    int i,j,mavgi=0,mavg=0;
+    for(i=0;i<n;i++){
+        int avg=0;
+        for(j=0;j<5;j++){
+            avg+=s[i].marks[j];
+        }
+        avg/=5;
+        if(avg>mavg){
+            mavgi=i;
+            mavg=avg;
+        }
+    }
+    return mavgi;
+}
+
+int main(){
+    int i,j;
+    //Taking inputs
+    printf("Enter number of Students in record:");
+    int n;
+    scanf("%d",&n);
+    struct student std[n];
+    
+    for(i=1;i<=n;i++){
+        printf("Enter the name of Student %d ",i);
+        scanf("%s",std[i-1].name);
+        printf("Enter the Address of Student %d ",i);
+        scanf("%s",std[i-1].Address);
+        printf("Enter the Marks in Maths ");
+        scanf("%d",&std[i-1].marks[0]);
+        printf("Enter the Marks in Physics ");
+        scanf("%d",&std[i-1].marks[1]);
+        printf("Enter the Marks in Chemistry ");
+        scanf("%d",&std[i-1].marks[2]);
+        printf("Enter the Marks in Computer ");
+        scanf("%d",&std[i-1].marks[3]);
+        printf("Enter the Marks in English ");
+        scanf("%d",&std[i-1].marks[4]);
+    }
+    printf("\n\n\n");
+    up:
+    printf("1. Find the name of the students who have passed and failed in minimum three subjects.\n");
+    printf("2. Show the record of the student who has got maximum marks in Mathematics.\n");
+    printf("3. Show the record of the student who has got minimum marks in Physics.\n");
+    printf("4. Show the record of the student whose average marks is maximum.\n");
+    printf("5. Print the record of the student with name and total.\n");
+    int ch;
+    scanf("%d",&ch);
+
+    switch(ch){
+        case 1:
+        printf("Students who passed in 3 subjects or more: \n");
+        for(i=0;i<n;i++){
+            print_if_passed(std[i]);
+        }
+        printf("\nStudents who failed in 3 subjects or more: \n");
+        for(i=0;i<n;i++){
+            print_if_failed(std[i]);
+        }
+        break;
+
+        case 2:
+        print_record_max(std,n,0);
+        break;
+
+        case 3:
+        print_record_min(std,n,1);
+        break;
+        
+        case 4:
+        printrec(std,maxavgindex(std,n));
+        break;
+
+        case 5:
+        for(int i=0;i<n;i++){
+            printf("\n\nRecord of Student no. %d",i+1);
+            printrec(std,i);
+        }
+        break;
+
+        default:
+        printf("Wrong input");
+        goto up;
+        break;
+    }
+}
