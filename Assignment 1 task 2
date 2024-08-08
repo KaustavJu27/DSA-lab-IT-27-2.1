@@ -1,0 +1,71 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_ACCOUNTS 100
+#define MIN_BALANCE 1000
+#define MAX_BALANCE 100000
+#define INTEREST_RATE 0.05 // 5% interest rate
+
+// Structure for SavingsAccount
+struct SavingsAccount {
+    char accountHolderName[50];
+    int accountNumber;
+    float balance;
+};
+
+// Function prototypes
+void deposit(struct SavingsAccount *account, float amount);
+float calculateInterest(struct SavingsAccount *account);
+void printAccountDetails(struct SavingsAccount account);
+
+// Function to deposit an amount into the account
+void deposit(struct SavingsAccount *account, float amount) {
+    account->balance += amount;
+}
+
+// Function to calculate interest for the account
+float calculateInterest(struct SavingsAccount *account) {
+    return account->balance * INTEREST_RATE;
+}
+
+// Function to print account details
+void printAccountDetails(struct SavingsAccount account) {
+    printf("Account Holder: %s\n", account.accountHolderName);
+    printf("Account Number: %d\n", account.accountNumber);
+    printf("Balance: Rs. %.2f\n", account.balance);
+    printf("----------------------------\n");
+}
+
+int main() {
+    struct SavingsAccount accounts[MAX_ACCOUNTS];
+    float totalInterest = 0.0;
+    int i ;
+
+    // Seed the random number generator
+    srand(time(NULL));
+
+    // Create 100 SavingsAccount instances with random balances
+    for (i = 0; i < MAX_ACCOUNTS; i++) {
+        snprintf(accounts[i].accountHolderName, sizeof(accounts[i].accountHolderName), "AccountHolder%d", i + 1);
+        accounts[i].accountNumber = i + 1; // Sequential account number
+        accounts[i].balance = (rand() % (MAX_BALANCE - MIN_BALANCE + 1)) + MIN_BALANCE; // Random balance
+    }
+
+    // Calculate interest for one year and update balances
+    for (i = 0; i < MAX_ACCOUNTS; i++) {
+        float interest = calculateInterest(&accounts[i]);
+        totalInterest += interest;
+        deposit(&accounts[i], interest); // Deposit interest to account
+    }
+
+    // Print account details and total interest
+    printf("Account Details after Interest Calculation:\n");
+    for (i = 0; i < MAX_ACCOUNTS; i++) {
+        printAccountDetails(accounts[i]);
+    }
+
+    printf("\nTotal Interest to be paid to all accounts in one year: Rs. %.2f\n", totalInterest);
+
+    return 0;
+}
