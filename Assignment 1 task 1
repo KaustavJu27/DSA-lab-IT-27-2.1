@@ -1,148 +1,161 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-struct student
-{
-    char name[20];
-    char Address[50];
-    int marks[5]; //position 1 for maths, 2 for physics, 3 for Chemistry, 4 for Computer, 5 for English
+#define MAX_STUDENTS 10
+#define SUBJECTS 5
+
+// Structure to hold student information
+struct Student {
+    char name[50];
+    char address[100];
+    int marks[SUBJECTS];
 };
 
-void printrec(struct student s[], int n){
-    printf("\nName = %s",s[n].name);
-    printf("\nAddress = %s",s[n].Address);
-    printf("\nMarks in Maths = %d",s[n].marks[0]);
-    printf("\nMarks in Physics = %d",s[n].marks[1]);
-    printf("\nMarks in Chemistry = %d",s[n].marks[2]);
-    printf("\nMarks in Computer = %d",s[n].marks[3]);
-    printf("\nMarks in English = %d",s[n].marks[4]);
-}
-void print_if_passed(struct student s){
-    int i,cnt=0;
-    for(i=0;i<5;i++){
-        if(s.marks[i]>=40){
-            cnt++;
-        }
-    }
-    if(cnt>=3){
-        printf(s.name);
-    }
-}
-void print_if_failed(struct student s){
-    int i,cnt=0;
-    for(i=0;i<5;i++){
-        if(s.marks[i]>=40){
-            cnt++;
-        }
-    }
-    if(cnt<3){
-        printf(s.name);
-    }
-}
-void print_record_max(struct student s[],int n, int sub_number){
-    int maxi=0,i;
-    for(i=0;i<n;i++){
-        if(s[maxi].marks[sub_number] < s[i].marks[sub_number]){
-            maxi=i;
-        }
-    }
-    printrec(s,maxi);
-}
-void print_record_min(struct student s[],int n, int sub_number){
-    int mini=0,i;
-    for(i=0;i<n;i++){
-        if(s[mini].marks[sub_number] > s[i].marks[sub_number]){
-            mini=i;
-        }
-    }
-    printrec(s,mini);
-}
+// Function prototypes
+void inputStudentData(struct Student *students, int count);
+void displayPassedFailed(struct Student *students, int count);
+void displayMaxMaths(struct Student *students, int count);
+void displayMinPhysics(struct Student *students, int count);
+void displayMaxAverage(struct Student *students, int count);
+void displayTotalMarks(struct Student *students, int count);
 
-int maxavgindex(struct student s[],int n){
-    int i,j,mavgi=0,mavg=0;
-    for(i=0;i<n;i++){
-        int avg=0;
-        for(j=0;j<5;j++){
-            avg+=s[i].marks[j];
+int main() {
+    struct Student students[MAX_STUDENTS];
+    int choice;
+
+    // Input student data
+    inputStudentData(students, MAX_STUDENTS);
+
+    do {
+        printf("\nMenu:\n");
+        printf("1. Find students who passed/failed in minimum three subjects\n");
+        printf("2. Show record of the student with maximum marks in Mathematics\n");
+        printf("3. Show record of the student with minimum marks in Physics\n");
+        printf("4. Show record of the student with maximum average marks\n");
+        printf("5. Print record of students with name and total marks\n");
+        printf("6. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                displayPassedFailed(students, MAX_STUDENTS);
+                break;
+            case 2:
+                displayMaxMaths(students, MAX_STUDENTS);
+                break;
+            case 3:
+                displayMinPhysics(students, MAX_STUDENTS);
+                break;
+            case 4:
+                displayMaxAverage(students, MAX_STUDENTS);
+                break;
+            case 5:
+                displayTotalMarks(students, MAX_STUDENTS);
+                break;
+            case 6:
+                printf("Exiting...\n");
+                break;
+            default:
+                printf("Invalid choice! Please try again.\n");
         }
-        avg/=5;
-        if(avg>mavg){
-            mavgi=i;
-            mavg=avg;
-        }
-    }
-    return mavgi;
+    } while (choice != 6);
+
+    return 0;
 }
 
-int main(){
-    int i,j;
-    //Taking inputs
-    printf("Enter number of Students in record:");
-    int n;
-    scanf("%d",&n);
-    struct student std[n];
-    
-    for(i=1;i<=n;i++){
-        printf("Enter the name of Student %d ",i);
-        scanf("%s",std[i-1].name);
-        printf("Enter the Address of Student %d ",i);
-        scanf("%s",std[i-1].Address);
-        printf("Enter the Marks in Maths ");
-        scanf("%d",&std[i-1].marks[0]);
-        printf("Enter the Marks in Physics ");
-        scanf("%d",&std[i-1].marks[1]);
-        printf("Enter the Marks in Chemistry ");
-        scanf("%d",&std[i-1].marks[2]);
-        printf("Enter the Marks in Computer ");
-        scanf("%d",&std[i-1].marks[3]);
-        printf("Enter the Marks in English ");
-        scanf("%d",&std[i-1].marks[4]);
+// Function to input student data
+void inputStudentData(struct Student *students, int count) {
+    for (int i = 0; i < count; i++) {
+        printf("\nEnter details for student %d:\n", i + 1);
+        printf("Name: ");
+        scanf(" %[^\n]", students[i].name);
+        printf("Address: ");
+        scanf(" %[^\n]", students[i].address);
+        printf("Enter marks for five subjects:\n");
+        for (int j = 0; j < SUBJECTS; j++) {
+            printf("Subject %d: ", j + 1);
+            scanf("%d", &students[i].marks[j]);
+        }
     }
-    printf("\n\n\n");
-    up:
-    printf("1. Find the name of the students who have passed and failed in minimum three subjects.\n");
-    printf("2. Show the record of the student who has got maximum marks in Mathematics.\n");
-    printf("3. Show the record of the student who has got minimum marks in Physics.\n");
-    printf("4. Show the record of the student whose average marks is maximum.\n");
-    printf("5. Print the record of the student with name and total.\n");
-    int ch;
-    scanf("%d",&ch);
+}
 
-    switch(ch){
-        case 1:
-        printf("Students who passed in 3 subjects or more: \n");
-        for(i=0;i<n;i++){
-            print_if_passed(std[i]);
+// Function to display students who passed/failed in minimum three subjects
+void displayPassedFailed(struct Student *students, int count) {
+    printf("\nStudents who passed and failed in minimum three subjects:\n");
+    for (int i = 0; i < count; i++) {
+        int passCount = 0;
+        for (int j = 0; j < SUBJECTS; j++) {
+            if (students[i].marks[j] >= 40) {
+                passCount++;
+            }
         }
-        printf("\nStudents who failed in 3 subjects or more: \n");
-        for(i=0;i<n;i++){
-            print_if_failed(std[i]);
+        if (passCount >= 3) {
+            printf("%s: Passed\n", students[i].name);
+        } else {
+            printf("%s: Failed\n", students[i].name);
         }
-        break;
+    }
+}
 
-        case 2:
-        print_record_max(std,n,0);
-        break;
-
-        case 3:
-        print_record_min(std,n,1);
-        break;
-        
-        case 4:
-        printrec(std,maxavgindex(std,n));
-        break;
-
-        case 5:
-        for(int i=0;i<n;i++){
-            printf("\n\nRecord of Student no. %d",i+1);
-            printrec(std,i);
+// Function to display the student with maximum marks in Mathematics
+void displayMaxMaths(struct Student *students, int count) {
+    int maxIndex = 0;
+    for (int i = 1; i < count; i++) {
+        if (students[i].marks[0] > students[maxIndex].marks[0]) {
+            maxIndex = i;
         }
-        break;
+    }
+    printf("\nStudent with maximum marks in Mathematics:\n");
+    printf("Name: %s\n", students[maxIndex].name);
+    printf("Address: %s\n", students[maxIndex].address);
+    printf("Marks in Mathematics: %d\n", students[maxIndex].marks[0]);
+}
 
-        default:
-        printf("Wrong input");
-        goto up;
-        break;
+// Function to display the student with minimum marks in Physics
+void displayMinPhysics(struct Student *students, int count) {
+    int minIndex = 0;
+    for (int i = 1; i < count; i++) {
+        if (students[i].marks[1] < students[minIndex].marks[1]) {
+            minIndex = i;
+        }
+    }
+    printf("\nStudent with minimum marks in Physics:\n");
+    printf("Name: %s\n", students[minIndex].name);
+    printf("Address: %s\n", students[minIndex].address);
+    printf("Marks in Physics: %d\n", students[minIndex].marks[1]);
+}
+
+// Function to display the student with maximum average marks
+void displayMaxAverage(struct Student *students, int count) {
+    int maxIndex = 0;
+    float maxAverage = 0.0;
+    for (int i = 0; i < count; i++) {
+        float total = 0.0;
+        for (int j = 0; j < SUBJECTS; j++) {
+            total += students[i].marks[j];
+        }
+        float average = total / SUBJECTS;
+        if (average > maxAverage) {
+            maxAverage = average;
+            maxIndex = i;
+        }
+    }
+    printf("\nStudent with maximum average marks:\n");
+    printf("Name: %s\n", students[maxIndex].name);
+    printf("Address: %s\n", students[maxIndex].address);
+    printf("Average Marks: %.2f\n", maxAverage);
+}
+
+// Function to print records of students with total marks
+void displayTotalMarks(struct Student *students, int count) {
+    printf("\nRecords of students with total marks:\n");
+    for (int i = 0; i < count; i++) {
+        int total = 0;
+        for (int j = 0; j < SUBJECTS; j++) {
+            total += students[i].marks[j];
+        }
+        printf("Name: %s, Total Marks: %d\n", students[i].name, total);
     }
 }
